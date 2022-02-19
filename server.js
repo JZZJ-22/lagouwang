@@ -1,45 +1,83 @@
-var http = require('http')
-var fs = require('fs')
-var url = require('url')
-var port = process.argv[2]
+let n = 1;
+getPage.onclick = () => {
+  const request = new XMLHttpRequest();
+  request.open("GET", `/page${n+1}`);
+  request.onreadystatechange = () => {
+    if (request.readyState === 4 && request.status === 200) {
+      const array = JSON.parse(request.response);
+      array.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item.id;
+        xxx.appendChild(li);
+      });
+      n+=1
+    }
+  };
+  request.send();
+};
+getJSON.onclick = () => {
+  const request = new XMLHttpRequest();
+  request.open("get", "/5.json");
+  request.onreadystatechange = () => {
+    if (request.readyState === 4 && request.status === 200) {
+      console.log(typeof request.response);
+      console.log(request.response);
+      const bool = JSON.parse(request.response);
+      console.log(typeof bool);
+      console.log(bool);
+    }
+  };
+  request.send();
+};
+getXML.onclick = () => {
+  const request = new XMLHttpRequest();
+  request.open("GET", "/4.xml");
+  request.onreadystatechange = () => {
+    if (request.readyState === 4 && request.status === 200) {
+      const dom = request.responseXML;
+      const text = dom.getElementsByTagName("warning")[0].textContent;
+      console.log(text.trim());
+    }
+  };
+  request.send();
+};
+getHTML.onclick = () => {
+  const request = new XMLHttpRequest();
+  request.open("GET", "/3.htm");
+  request.onload = () => {
+    const div = document.createElement("div");
+    div.innerHTML = request.response;
+    document.body.appendChild(div);
+  };
+  request.onerror = () => {};
+  request.send();
+};
+getJS.onclick = () => {
+  const request = new XMLHttpRequest();
+  request.open("GET", "/2.js");
+  request.onload = () => {
+    const script = document.createElement("script");
+    script.innerHTML = request.response;
+    document.body.appendChild(script);
+  };
+  request.onerror = () => {};
+  request.send();
+};
 
-if(!port){
-  console.log('请指定端口号好不啦？\nnode server.js 8888 这样不会吗？')
-  process.exit(1)
-}
-
-var server = http.createServer(function(request, response){
-  var parsedUrl = url.parse(request.url, true)
-  var pathWithQuery = request.url 
-  var queryString = ''
-  if(pathWithQuery.indexOf('?') >= 0){ queryString = pathWithQuery.substring(pathWithQuery.indexOf('?')) }
-  var path = parsedUrl.pathname
-  var query = parsedUrl.query
-  var method = request.method
-
-  /******** 从这里开始看，上面不要看 ************/
-
-  console.log('有个傻子发请求过来啦！路径（带查询参数）为：' + pathWithQuery)
-
-  if(path === '/'){
-    response.statusCode = 200
-    response.setHeader('Content-Type', 'text/html;charset=utf-8')
-    response.write(`二哈`)
-    response.end()
-  } else if(path === '/x'){
-    response.statusCode = 200
-    response.setHeader('Content-Type', 'text/css;charset=utf-8')
-    response.write(`body{color: red;}`)
-    response.end()
-  } else {
-    response.statusCode = 404
-    response.setHeader('Content-Type', 'text/html;charset=utf-8')
-    response.write(`你输入的路径不存在对应的内容`)
-    response.end()
-  }
-
-  /******** 代码结束，下面不要看 ************/
-})
-
-server.listen(port)
-console.log('监听 ' + port + ' 成功\n请用在空中转体720度然后用电饭煲打开 http://localhost:' + port)
+getCSS.onclick = () => {
+  const request = new XMLHttpRequest();
+  request.open("GET", "/style.css"); 
+  request.onreadystatechange = () => {
+    console.log(request.readyState);
+    if (request.readyState === 4) {
+      if (request.status >= 200 && request.status < 300) {
+        const style = document.createElement("style");
+        style.innerHTML = request.response;
+        document.head.appendChild(style);
+      } else {
+        alert("加载 CSS 失败");
+      }
+    }
+  };
+  request.send(); 
+};
